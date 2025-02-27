@@ -73,7 +73,8 @@ export default function Home() {
 
         setMeetups(filteredMeetups as Meetup[]);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -86,6 +87,7 @@ export default function Home() {
       setUser(null);
       toast.success("Logged out successfully");
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       toast.error("Logout failed");
     }
   };

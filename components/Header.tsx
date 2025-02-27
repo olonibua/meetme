@@ -1,6 +1,6 @@
 "use client"; // Client component for interactivity
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useTheme } from '../lib/theme';
 import { motion } from 'framer-motion';
 import { HeaderProps } from '../types/components';
@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import AuthModal from './AuthModal';
 
 export default function Header({ user, onLogout }: HeaderProps) {
-  const router = useRouter();
+  // const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   const { theme, toggleTheme } = useTheme();
