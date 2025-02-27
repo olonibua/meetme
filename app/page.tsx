@@ -99,7 +99,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [maxDistance]);
+  }, [maxDistance, location]);
 
   const handleLogout = async () => {
     try {
