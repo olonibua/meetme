@@ -52,14 +52,17 @@ export default function Home() {
           setUser(userData);
         } catch (error) {
           // User not logged in, continue without user data
-          console.log('No user logged in');
+          console.log("No user logged in");
         }
 
         // Get location and meetups regardless of auth status
         const loc = await getUserLocation();
         setLocation(loc);
-        const meetupData = await databases.listDocuments(DB_ID, MEETUPS_COLLECTION_ID);
-        
+        const meetupData = await databases.listDocuments(
+          DB_ID,
+          MEETUPS_COLLECTION_ID
+        );
+
         const filteredMeetups = meetupData.documents.filter((doc) => {
           if (!loc) return true;
           const distance = calculateDistance(
@@ -72,8 +75,8 @@ export default function Home() {
         });
 
         setMeetups(filteredMeetups as Meetup[]);
-      } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
@@ -86,6 +89,7 @@ export default function Home() {
       await account.deleteSession("current");
       setUser(null);
       toast.success("Logged out successfully");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       toast.error("Logout failed");
