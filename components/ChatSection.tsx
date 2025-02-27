@@ -8,6 +8,7 @@ import { Client } from 'appwrite';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useTheme } from '../lib/theme';
+import { ID } from 'appwrite';
 
 const MESSAGES_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_MESSAGES_COLLECTION_ID!;
 
@@ -52,8 +53,8 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           [Query.equal('meetupId', meetupId)]
         );
         setMessages(response.documents as Message[]);
-      } catch (error) {
-        console.error('Failed to fetch messages:', error);
+      } catch {
+        console.error('Failed to fetch messages:');
       }
     };
 
@@ -84,18 +85,17 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
       await databases.createDocument(
         DB_ID,
         MESSAGES_COLLECTION_ID,
-        'unique()',
+        ID.unique(),
         {
           message: newMessage.trim(),
           meetupId: meetupId,
           userId: user.$id,
-          userName: user.name,
           createdAt: new Date().toISOString()
         }
       );
       setNewMessage('');
-    } catch (error) {
-      console.error('Failed to send message:', error);
+    } catch  {
+      console.error('Failed to send message:');
     }
   };
 
@@ -153,7 +153,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
             >
               {message.userId !== user.$id && (
                 <p className="text-xs opacity-75 mb-1">
-                  {message.userName || 'Anonymous'}
+                  {user.name || 'Anonymous'}
                 </p>
               )}
               <p className="text-sm md:text-base">{message.message}</p>
