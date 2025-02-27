@@ -236,7 +236,9 @@ export default function Home() {
               />
             ))}
           </div>
+          {location && (
           <MapView userLocation={location} meetups={meetups} />
+          )}
         </div>
       </div>
 

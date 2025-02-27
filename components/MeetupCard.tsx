@@ -1,7 +1,7 @@
 import { ID } from 'appwrite';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { databases, DB_ID } from '../lib/appwrite';
+import { databases, DB_ID, MEETUPS_PARTICIPANTS_ID } from '../lib/appwrite';
 import { MeetupCardProps } from '../types/components';
 import { useTheme } from '../lib/theme';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -12,8 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { calculateDistance, getUserLocation } from '../lib/geolocation';
 import { toast } from "sonner";
 import AuthModal from '../components/AuthModal';
-
-const MEETUPS_PARTICIPANTS_ID = process.env.NEXT_PUBLIC_APPWRITE_MEETUPS_PARTICIPANTS_ID!;
+import { Query } from 'appwrite';
 
 export default function MeetupCard({ meetup, user, userLocation }: MeetupCardProps) {
   const { theme } = useTheme();
@@ -21,6 +20,8 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
   const [isExpanded, setIsExpanded] = useState(false);
   const [distance, setDistance] = useState<number | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (userLocation) {
@@ -34,10 +35,43 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
     }
   }, [userLocation, meetup]);
 
+  useEffect(() => {
+    const checkParticipation = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const response = await databases.listDocuments(
+          DB_ID,
+          MEETUPS_PARTICIPANTS_ID,
+          [
+            Query.equal('meetId', meetup.$id),
+            Query.equal('userId', user.$id)
+          ]
+        );
+        
+        setHasJoined(response.documents.length > 0);
+      } catch (error) {
+        console.error('Error checking participation:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkParticipation();
+  }, [user, meetup.$id]);
+
   const handleJoin = async () => {
     if (!user) {
       toast.error("Please sign in to join meetups");
       setShowAuthModal(true);
+      return;
+    }
+
+    if (hasJoined) {
+      router.push(`/meetup/${meetup.$id}`);
       return;
     }
 
@@ -158,8 +192,15 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
             <Button 
               onClick={handleJoin}
               className="w-full"
+              disabled={isLoading}
             >
-              Join Meetup
+              {isLoading ? (
+                "Loading..."
+              ) : hasJoined ? (
+                "Open Meetup"
+              ) : (
+                "Join Meetup"
+              )}
             </Button>
 
             

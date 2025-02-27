@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Query } from 'appwrite';
 import { Models } from 'appwrite';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Participant extends Models.Document {
   userId: string;
@@ -70,18 +71,24 @@ export default function MeetupDetails({ params }: { params: Promise<{ id: string
     }
   };
 
-  if (loading) return (
-    <div className={cn(
-      "min-h-screen flex items-center justify-center",
-      theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-    )}>
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1 }}
-        className="w-8 h-8 border-4 border-blue-500 rounded-full border-t-transparent"
-      />
-    </div>
-  );
+  if (loading)
+    return (
+      <div
+        className={cn(
+          "min-h-screen p-4",
+          theme === "dark" ? "bg-gray-900" : "bg-white"
+        )}
+      >
+        <div className="container mx-auto space-y-4">
+          <Skeleton className="h-10 w-32" />
+          <Skeleton className="h-[200px] w-full" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-[300px]" />
+            <Skeleton className="h-[300px]" />
+          </div>
+        </div>
+      </div>
+    );
 
   if (!meetup || !user) return (
     <div className={cn(

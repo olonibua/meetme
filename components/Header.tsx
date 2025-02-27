@@ -36,7 +36,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
           whileHover={{ scale: 1.05 }}
           className="text-lg sm:text-2xl font-bold"
         >
-          Remote Meetup
+          Meetme
         </motion.h1>
 
         {/* Desktop Menu */}
