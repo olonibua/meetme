@@ -31,7 +31,7 @@ export default function LocationAutocomplete({ value, onChange, className }: Loc
       const data = await response.json();
       setSuggestions(data.features);
     } catch  {
-      console.error('Error fetching location suggestions:',);
+      // console.error('Error fetching location suggestions:',);
     }
   };
 
