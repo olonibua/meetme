@@ -20,7 +20,7 @@ export const getUserLocation = async (): Promise<MeetupLocation> => {
       if (permission.state === 'denied') {
         throw new Error('Location permission was denied');
       }
-    } catch (error) {
+    } catch {
       // Safari might not support permissions API, continue with regular geolocation
     }
   }
@@ -62,7 +62,7 @@ export const getUserLocation = async (): Promise<MeetupLocation> => {
       lng: position.coords.longitude,
       address: data.features[0]?.place_name || 'Unknown location'
     };
-  } catch (error) {
+  } catch{
     throw new Error('Failed to get address from coordinates');
   }
 };
