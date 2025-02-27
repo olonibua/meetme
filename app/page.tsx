@@ -55,41 +55,34 @@ export default function Home() {
           console.log("No user logged in");
         }
 
-        // Get location with better error handling
+        // Get location silently without prompts
         try {
           const loc = await getUserLocation();
           setLocation(loc);
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          toast.error(errorMessage);
-          // Optionally prompt user to enable location
-          if (confirm('This app requires location access to work properly. Would you like to enable it?')) {
-            // Retry location access
-            try {
-              const loc = await getUserLocation();
-              setLocation(loc);
-            } catch {
-              toast.error('Failed to get location. Please enable location access in your browser settings.');
-            }
-          }
+        } catch  {
+          console.log("Location not available:");
+          // Don't show any error toast or modal here
+          // Let the browser handle the native location prompt
         }
 
-        // Continue with meetups fetch...
+        // Fetch all meetups regardless of location
         const meetupData = await databases.listDocuments(
           DB_ID,
           MEETUPS_COLLECTION_ID
         );
 
-        const filteredMeetups = meetupData.documents.filter((doc) => {
-          if (!location) return true;
-          const distance = calculateDistance(
-            location.lat,
-            location.lng,
-            doc.lat,
-            doc.lng
-          );
-          return distance <= maxDistance;
-        });
+        // Filter meetups only if location is available
+        const filteredMeetups = location 
+          ? meetupData.documents.filter((doc) => {
+              const distance = calculateDistance(
+                location.lat,
+                location.lng,
+                doc.lat,
+                doc.lng
+              );
+              return distance <= maxDistance;
+            })
+          : meetupData.documents;
 
         setMeetups(filteredMeetups as Meetup[]);
       } catch (error) {
@@ -162,8 +155,8 @@ export default function Home() {
       });
       setSelectedLocation(null);
       toast.success("Meetup created successfully!");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    } catch  {
+      const errorMessage ='Unknown error';
       toast.error("Failed to create meetup: " + errorMessage);
     }
   };

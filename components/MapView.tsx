@@ -10,18 +10,25 @@ export default function MapView({ userLocation, meetups }: MapViewProps) {
   const map = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
-    if (!userLocation || !mapContainer.current) return;
+    if (!mapContainer.current) return;
+
+    // Default to a central location if user location is not available
+    const center = userLocation 
+      ? [userLocation.lng, userLocation.lat] as [number, number]
+      : [-0.118092, 51.509865] as [number, number];
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [userLocation.lng, userLocation.lat],
-      zoom: 12,
+      center: center,
+      zoom: userLocation ? 12 : 2,
     });
 
-    new mapboxgl.Marker()
-      .setLngLat([userLocation.lng, userLocation.lat])
-      .addTo(map.current);
+    if (userLocation) {
+      new mapboxgl.Marker()
+        .setLngLat([userLocation.lng, userLocation.lat])
+        .addTo(map.current);
+    }
 
     meetups.forEach((meetup) => {
       new mapboxgl.Marker({ color: "#4285F4" })
@@ -30,7 +37,7 @@ export default function MapView({ userLocation, meetups }: MapViewProps) {
         .addTo(map.current!);
     });
 
-    return () => map.current!.remove();
+    return () => map.current?.remove();
   }, [userLocation, meetups]);
 
   return <div ref={mapContainer} className="h-96 w-full rounded-lg" />;
