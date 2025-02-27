@@ -53,8 +53,8 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
         );
         
         setHasJoined(response.documents.length > 0);
-      } catch (error) {
-        console.error('Error checking participation:', error);
+      } catch  {
+        console.error('Error checking participation:');
       } finally {
         setIsLoading(false);
       }
@@ -80,7 +80,7 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
         try {
           const newLocation = await getUserLocation();
           userLocation = newLocation;
-        } catch (error) {
+        } catch  {
           toast.error("Location access is required to join meetups");
           return;
         }
@@ -105,8 +105,8 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
 
       toast.success("Successfully joined the meetup!");
       router.push(`/meetup/${meetup.$id}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    } catch {
+      const errorMessage = 'Unknown error';
       toast.error('Failed to join meetup: ' + errorMessage);
     }
   };

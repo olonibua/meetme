@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { databases, DB_ID } from '../lib/appwrite';
 import { User } from '../types/user';
 import { Query } from 'appwrite';
@@ -25,6 +25,7 @@ interface Message extends Models.Document {
   userId: string;
   meetupId: string;
   createdAt: string;
+  userName?: string;
 }
 
 export default function ChatSection({ meetupId, user }: ChatSectionProps) {
@@ -32,6 +33,15 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const { theme } = useTheme();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -39,9 +49,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
         const response = await databases.listDocuments(
           DB_ID,
           MESSAGES_COLLECTION_ID,
-          [
-            Query.equal('meetupId', meetupId)
-          ]
+          [Query.equal('meetupId', meetupId)]
         );
         setMessages(response.documents as Message[]);
       } catch (error) {
@@ -50,7 +58,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
     };
 
     fetchMessages();
-    // Set up real-time subscription
+    
     const unsubscribe = client.subscribe(
       `databases.${DB_ID}.collections.${MESSAGES_COLLECTION_ID}.documents`,
       response => {
@@ -81,6 +89,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           message: newMessage.trim(),
           meetupId: meetupId,
           userId: user.$id,
+          userName: user.name,
           createdAt: new Date().toISOString()
         }
       );
@@ -92,7 +101,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
 
   return (
     <div className={`
-      rounded-xl shadow-lg p-6
+      rounded-xl shadow-lg p-4 md:p-6 max-w-3xl mx-auto
       ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}
     `}>
       <div className="flex justify-between items-center mb-4">
@@ -107,19 +116,19 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push('/')}
           className={`
-            px-3 py-1 text-sm flex items-center gap-1 rounded-lg
+            px-3 py-1 text-sm rounded-lg flex items-center gap-1
             ${theme === 'dark' ? 
               'bg-gray-700 text-gray-300 hover:bg-gray-600' : 
               'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }
           `}
         >
-          <span>←</span> Back to Meetups
+          <span>←</span> Back
         </motion.button>
       </div>
       
       <div className={`
-        h-96 overflow-y-auto mb-4 p-4 rounded-lg
+        h-[calc(100vh-300px)] overflow-y-auto mb-4 p-4 rounded-lg
         ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}
       `}>
         {messages.map((message) => (
@@ -131,7 +140,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           >
             <div 
               className={`
-                inline-block p-3 rounded-lg max-w-[80%]
+                inline-block p-3 rounded-lg max-w-[85%] break-words
                 ${message.userId === user.$id ?
                   (theme === 'dark' ? 
                     'bg-blue-600 text-white' : 
@@ -142,16 +151,22 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
                 }
               `}
             >
-              <p>{message.message}</p>
+              {message.userId !== user.$id && (
+                <p className="text-xs opacity-75 mb-1">
+                  {message.userName || 'Anonymous'}
+                </p>
+              )}
+              <p className="text-sm md:text-base">{message.message}</p>
               <p className={`
                 text-xs opacity-75 mt-1
                 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
               `}>
-                {new Date(message.createdAt).toLocaleString()}
+                {new Date(message.createdAt).toLocaleTimeString()}
               </p>
             </div>
           </motion.div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={handleSendMessage} className="flex gap-2">
@@ -161,7 +176,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
           className={`
-            flex-1 p-2 rounded-lg
+            flex-1 p-2 rounded-lg text-sm md:text-base
             ${theme === 'dark' ? 
               'bg-gray-700 text-white placeholder-gray-400' : 
               'bg-gray-100 text-gray-900 placeholder-gray-500'
@@ -173,7 +188,7 @@ export default function ChatSection({ meetupId, user }: ChatSectionProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={`
-            px-4 py-2 rounded-lg font-medium
+            px-4 py-2 rounded-lg font-medium text-sm md:text-base whitespace-nowrap
             ${theme === 'dark' ? 
               'bg-blue-600 hover:bg-blue-500 text-white' : 
               'bg-blue-500 hover:bg-blue-600 text-white'
