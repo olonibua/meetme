@@ -5,6 +5,12 @@ import { cn } from "@/lib/utils";
 import { useTheme } from '../lib/theme';
 import { MeetupLocation } from '../types/meetup';
 
+interface MapboxFeature {
+  id: string;
+  place_name: string;
+  center: [number, number];
+}
+
 interface LocationAutocompleteProps {
   value: string;
   onChange: (location: MeetupLocation) => void;
@@ -13,7 +19,7 @@ interface LocationAutocompleteProps {
 
 export default function LocationAutocomplete({ value, onChange, className }: LocationAutocompleteProps) {
   const { theme } = useTheme();
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<MapboxFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputValue, setInputValue] = useState<string>(value || '');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,7 +55,7 @@ export default function LocationAutocomplete({ value, onChange, className }: Loc
     }, 300);
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: MapboxFeature) => {
     const location: MeetupLocation = {
       address: suggestion.place_name,
       lat: suggestion.center[1],
