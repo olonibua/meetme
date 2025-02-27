@@ -2,8 +2,7 @@
 import { motion } from 'framer-motion';
 import { useTheme } from '../lib/theme';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 
 interface ModalProps {
   isOpen: boolean;

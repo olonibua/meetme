@@ -21,7 +21,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import LocationPicker from "../components/LocationPicker";
 import AuthModal from "../components/AuthModal";
 import { toast } from "sonner";
 
@@ -178,8 +177,8 @@ export default function Home() {
             onClick={handleCreateClick}
             className={cn(
               theme === 'dark' ? 
-                'bg-black hover:bg-black' : 
-                'bg-black hover:bg-black'
+                'bg-white hover:bg-white text-black' : 
+                'bg-black hover:bg-black text-white'
             )}
           >
             Create Meetup
