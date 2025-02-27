@@ -12,15 +12,9 @@ export const getUserLocation = async (): Promise<MeetupLocation> => {
     throw new Error('Geolocation is not supported by your browser');
   }
 
-  // For Safari and other browsers
   return new Promise<MeetupLocation>((resolve, reject) => {
-    const timeoutId = setTimeout(() => {
-      reject(new Error('Location request timed out'));
-    }, 10000); // 10 second timeout
-
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        clearTimeout(timeoutId);
         resolve({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
@@ -28,11 +22,6 @@ export const getUserLocation = async (): Promise<MeetupLocation> => {
         });
       },
       (error: GeolocationPositionError) => {
-        clearTimeout(timeoutId);
-        if (error.code === 1) { // PERMISSION_DENIED
-          // Trigger a new permission request
-          navigator.geolocation.getCurrentPosition(() => {}, () => {}, {});
-        }
         reject(error);
       },
       {

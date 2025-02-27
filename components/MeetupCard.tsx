@@ -77,18 +77,11 @@ export default function MeetupCard({ meetup, user, userLocation }: MeetupCardPro
 
     try {
       if (!userLocation) {
-        toast.error("Location access is required to join meetups");
-        const confirmed = window.confirm(
-          "Location access is required to join meetups. Please enable location access and try again."
-        );
-        if (confirmed) {
+        try {
           const newLocation = await getUserLocation();
-          if (newLocation) {
-            userLocation = newLocation;
-          } else {
-            return;
-          }
-        } else {
+          userLocation = newLocation;
+        } catch (error) {
+          toast.error("Location access is required to join meetups");
           return;
         }
       }
