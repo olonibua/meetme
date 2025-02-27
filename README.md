@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Remote Meetup App
+
+A location-based meetup application built with Next.js that helps users create and join local meetups. The app ensures participants are within reasonable distance and provides real-time location tracking.
+
+## Key Features
+
+- 🔐 **Secure Authentication**
+  - Email/password signup and login via Appwrite
+  - Protected routes and sessions
+
+- 📍 **Location-Based Features**
+  - Automatic location detection
+  - Distance-based meetup filtering
+  - Location verification for participants
+  - Warning system for out-of-area joins
+
+- 🗺️ **Interactive Maps**
+  - Visual meetup locations
+  - Location picker for meetup creation
+  - Real-time distance calculation
+  - Mapbox integration
+
+- 💬 **Real-time Communication**
+  - Chat functionality for meetup participants
+  - Participant management
+  - Creator controls
+
+- 🎨 **Modern UI/UX**
+  - Dark/Light theme support
+  - Responsive design
+  - Smooth animations
+  - Loading states
+
+## Tech Stack
+
+- **Frontend**
+  - Next.js 13+ (App Router)
+  - TypeScript
+  - Tailwind CSS
+  - Shadcn UI
+  - Framer Motion
+  - Mapbox GL JS
+
+- **Backend**
+  - Appwrite (Authentication & Database)
+  - Mapbox (Geocoding)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 16+
+- Appwrite instance
+- Mapbox account
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/remote-meetup-app.git
+cd remote-meetup-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Create `.env.local` with required variables:
+```env
+NEXT_PUBLIC_APPWRITE_ENDPOINT=
+NEXT_PUBLIC_APPWRITE_PROJECT=
+NEXT_PUBLIC_APPWRITE_MEETUPS_COLLECTION_ID=
+NEXT_PUBLIC_APPWRITE_MEETUPS_PARTICIPANTS_ID=
+NEXT_PUBLIC_APPWRITE_MESSAGES_COLLECTION_ID=
+NEXT_PUBLIC_MAPBOX_TOKEN=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start development server:
+```bash
+npm run dev
+```
 
-## Learn More
+## Appwrite Setup
 
-To learn more about Next.js, take a look at the following resources:
+### Collections Required
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Meetups Collection**
+   - title (string)
+   - description (string)
+   - location (string)
+   - time (string)
+   - lat (float)
+   - lng (float)
+   - maxParticipants (integer)
+   - category (string)
+   - requirements (string)
+   - creatorId (string)
+   - status (string)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Participants Collection**
+   - meetId (string)
+   - userId (string)
+   - joinedAt (string)
+   - distance (float)
+   - lat (float)
+   - lng (float)
+   - address (string)
 
-## Deploy on Vercel
+3. **Messages Collection**
+   - meetupId (string)
+   - userId (string)
+   - message (string)
+   - timestamp (string)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Create a Meetup**
+   - Set title and description
+   - Pick location on map
+   - Set date and time
+   - Specify requirements
+   - Choose category
+   - Set max participants
+
+2. **Join a Meetup**
+   - Browse nearby meetups
+   - View meetup details
+   - Check distance
+   - Request to join
+   - Chat with participants
+
+3. **Manage Meetups**
+   - Track participants
+   - Monitor distances
+   - Remove out-of-area participants
+   - Moderate chat
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open pull request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [Appwrite](https://appwrite.io/)
+- [Mapbox](https://www.mapbox.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+- [Framer Motion](https://www.framer.com/motion/)
