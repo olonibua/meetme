@@ -27,7 +27,7 @@ export const getUserLocation = async (): Promise<MeetupLocation> => {
           address: "Current Location"
         });
       },
-      (error) => {
+      (error: GeolocationPositionError) => {
         clearTimeout(timeoutId);
         if (error.code === 1) { // PERMISSION_DENIED
           // Trigger a new permission request
