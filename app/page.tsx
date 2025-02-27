@@ -75,9 +75,8 @@ export default function Home() {
         });
 
         setMeetups(filteredMeetups as Meetup[]);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch {
+        console.error("Error fetching data:");
       }
     };
 
@@ -89,9 +88,7 @@ export default function Home() {
       await account.deleteSession("current");
       setUser(null);
       toast.success("Logged out successfully");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch {
       toast.error("Logout failed");
     }
   };
