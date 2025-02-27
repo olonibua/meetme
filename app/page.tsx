@@ -22,6 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import LocationPicker from "../components/LocationPicker";
+import AuthModal from "../components/AuthModal";
+import { toast } from "sonner";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -40,19 +42,27 @@ export default function Home() {
   });
   const [selectedLocation, setSelectedLocation] = useState<MeetupLocation | null>(null);
   const [maxDistance, setMaxDistance] = useState<number>(50); // 50km default radius
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
-    const fetchUserAndLocation = async () => {
+    const fetchData = async () => {
       try {
-        const userData = await account.get();
-        setUser(userData);
+        // Try to get user data if logged in
+        try {
+          const userData = await account.get();
+          setUser(userData);
+        } catch (error) {
+          // User not logged in, continue without user data
+          console.log('No user logged in');
+        }
+
+        // Get location and meetups regardless of auth status
         const loc = await getUserLocation();
         setLocation(loc);
         const meetupData = await databases.listDocuments(DB_ID, MEETUPS_COLLECTION_ID);
         
-        // Filter meetups by distance
         const filteredMeetups = meetupData.documents.filter((doc) => {
-          if (!loc) return true; // Show all if location not available
+          if (!loc) return true;
           const distance = calculateDistance(
             loc.lat,
             loc.lng,
@@ -64,28 +74,27 @@ export default function Home() {
 
         setMeetups(filteredMeetups as Meetup[]);
       } catch (error) {
-        // Redirect to login if unauthorized
-        if (error instanceof Error && error.message.includes('missing scope')) {
-          window.location.href = '/login';
-          return;
-        }
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchUserAndLocation();
-  }, [maxDistance]); // Add maxDistance to dependencies
+    fetchData();
+  }, [maxDistance]);
 
   const handleLogout = async () => {
-    await account.deleteSession("current");
-    setUser(null);
-    window.location.href = "/login";
+    try {
+      await account.deleteSession("current");
+      setUser(null);
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error("Logout failed");
+    }
   };
 
   const handleCreateMeetup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedLocation) {
-      alert("Please select a location on the map");
+      toast.error("Please select a location on the map");
       return;
     }
 
@@ -132,22 +141,20 @@ export default function Home() {
         requirements: "",
       });
       setSelectedLocation(null);
+      toast.success("Meetup created successfully!");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert("Failed to create meetup: " + errorMessage);
+      toast.error("Failed to create meetup: " + errorMessage);
     }
   };
 
-  if (!user)
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1 }}
-          className="w-8 h-8 border-4 border-blue-500 rounded-full border-t-transparent"
-        />
-      </div>
-    );
+  const handleCreateClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    setIsModalOpen(true);
+  };
 
   return (
     <div className={cn(
@@ -168,11 +175,11 @@ export default function Home() {
             Nearby Meetups
           </motion.h2>
           <Button
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleCreateClick}
             className={cn(
               theme === 'dark' ? 
-                'bg-blue-600 hover:bg-blue-500' : 
-                'bg-blue-500 hover:bg-blue-600'
+                'bg-black hover:bg-black' : 
+                'bg-black hover:bg-black'
             )}
           >
             Create Meetup
@@ -350,6 +357,12 @@ export default function Home() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        defaultView="login"
+      />
     </div>
   );
 }
