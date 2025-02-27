@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import AuthModal from "../components/AuthModal";
 import { toast } from "sonner";
 import LocationAutocomplete from "../components/LocationAutocomplete";
+import { ID } from "appwrite";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -123,26 +124,18 @@ export default function Home() {
         creatorId: user!.$id,
         lat: selectedLocation.lat,
         lng: selectedLocation.lng,
-        participants: [], // Initialize empty participants array
-        status: 'active', // Add status field
+        participants: [],
         createdAt: new Date().toISOString(),
       };
 
       const meetup = await databases.createDocument(
         DB_ID,
         MEETUPS_COLLECTION_ID,
-        "unique()",
+        ID.unique(),
         meetupData
       );
 
-      setMeetups([
-        ...meetups,
-        {
-          ...meetup,
-          ...meetupData,
-        } as Meetup,
-      ]);
-
+      setMeetups([...meetups, { ...meetup, ...meetupData } as Meetup]);
       setIsModalOpen(false);
       setNewMeetup({
         title: "",
@@ -155,8 +148,8 @@ export default function Home() {
       });
       setSelectedLocation(null);
       toast.success("Meetup created successfully!");
-    } catch  {
-      const errorMessage ='Unknown error';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast.error("Failed to create meetup: " + errorMessage);
     }
   };

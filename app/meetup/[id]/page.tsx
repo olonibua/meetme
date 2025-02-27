@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { Query } from 'appwrite';
 import { Models } from 'appwrite';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 interface Participant extends Models.Document {
   userId: string;
@@ -50,8 +51,8 @@ export default function MeetupDetails({ params }: { params: Promise<{ id: string
         setUser(userData as User);
         setParticipants(participantsData.documents as Participant[]);
         setIsCreator(meetupData.creatorId === userData.$id);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
+      } catch  {
+        console.error('Failed to fetch data:');
       } finally {
         setLoading(false);
       }
@@ -66,8 +67,21 @@ export default function MeetupDetails({ params }: { params: Promise<{ id: string
     try {
       await databases.deleteDocument(DB_ID, MEETUPS_PARTICIPANTS_ID, participantId);
       setParticipants(participants.filter(p => p.$id !== participantId));
-    } catch (error) {
-      console.error('Failed to remove participant:', error);
+    } catch  {
+      console.error('Failed to remove participant:');
+    }
+  };
+
+  const handleDeleteMeetup = async () => {
+    if (!isCreator || !meetup) return;
+
+    try {
+      await databases.deleteDocument(DB_ID, MEETUPS_COLLECTION_ID, meetup.$id);
+      toast.success("Meetup deleted successfully!");
+      router.push('/'); // Redirect to the home page or meetups list
+    } catch  {
+      const errorMessage = 'Unknown error';
+      toast.error("Failed to delete meetup: " + errorMessage);
     }
   };
 
@@ -120,6 +134,16 @@ export default function MeetupDetails({ params }: { params: Promise<{ id: string
           >
             ← Back to Meetups
           </Button>
+
+          {isCreator && (
+            <Button
+              variant="destructive"
+              onClick={handleDeleteMeetup}
+              className="mb-4"
+            >
+              Delete Meetup
+            </Button>
+          )}
 
           <Card className={cn(
             "shadow-lg",
