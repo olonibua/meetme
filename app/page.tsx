@@ -51,24 +51,40 @@ export default function Home() {
         try {
           const userData = await account.get();
           setUser(userData);
-        } catch{
-          // User not logged in, continue without user data
+        } catch {
           console.log("No user logged in");
         }
 
-        // Get location and meetups regardless of auth status
-        const loc = await getUserLocation();
-        setLocation(loc);
+        // Get location with better error handling
+        try {
+          const loc = await getUserLocation();
+          setLocation(loc);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          toast.error(errorMessage);
+          // Optionally prompt user to enable location
+          if (confirm('This app requires location access to work properly. Would you like to enable it?')) {
+            // Retry location access
+            try {
+              const loc = await getUserLocation();
+              setLocation(loc);
+            } catch {
+              toast.error('Failed to get location. Please enable location access in your browser settings.');
+            }
+          }
+        }
+
+        // Continue with meetups fetch...
         const meetupData = await databases.listDocuments(
           DB_ID,
           MEETUPS_COLLECTION_ID
         );
 
         const filteredMeetups = meetupData.documents.filter((doc) => {
-          if (!loc) return true;
+          if (!location) return true;
           const distance = calculateDistance(
-            loc.lat,
-            loc.lng,
+            location.lat,
+            location.lng,
             doc.lat,
             doc.lng
           );
@@ -76,8 +92,9 @@ export default function Home() {
         });
 
         setMeetups(filteredMeetups as Meetup[]);
-      } catch {
-        console.error("Error fetching data:");
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        toast.error('Error loading data: ' + errorMessage);
       }
     };
 
