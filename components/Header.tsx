@@ -101,7 +101,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
           }}
           transition={{ type: "spring", bounce: 0.1 }}
           className={cn(
-            "fixed top-[72px] right-0 h-screen w-64 p-6",
+            "fixed top-[60px] right-0 h-screen w-64 p-6",
             "flex flex-col space-y-6",
             theme === 'dark' ? 'bg-black' : 'bg-white',
             !isMobileMenuOpen && "pointer-events-none"
