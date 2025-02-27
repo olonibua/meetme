@@ -160,19 +160,21 @@ export default function Home() {
   };
 
   return (
-    <div className={cn(
-      "min-h-screen",
-      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
-    )}>
+    <div
+      className={cn(
+        "min-h-screen",
+        theme === "dark" ? "bg-gray-900" : "bg-gray-100"
+      )}
+    >
       <Header user={user} onLogout={handleLogout} />
       <div className="container mx-auto p-4 pt-28">
         <div className="flex justify-between items-center mb-6">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className={cn(
-              "text-2xl font-semibold",
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+              "text-lg sm:text-2xl font-semibold",
+              theme === "dark" ? "text-white" : "text-gray-900"
             )}
           >
             Nearby Meetups
@@ -180,9 +182,9 @@ export default function Home() {
           <Button
             onClick={handleCreateClick}
             className={cn(
-              theme === 'dark' ? 
-                'bg-white hover:bg-white text-black' : 
-                'bg-black hover:bg-black text-white'
+              theme === "dark"
+                ? "bg-white hover:bg-white text-black"
+                : "bg-black hover:bg-black text-white"
             )}
           >
             Create Meetup
@@ -190,7 +192,7 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-4 mb-4">
           <Label>Maximum Distance (km)</Label>
-          <Select 
+          <Select
             value={maxDistance.toString()}
             onValueChange={(value) => setMaxDistance(Number(value))}
           >
@@ -209,9 +211,9 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             {meetups.map((meetup) => (
-              <MeetupCard 
-                key={meetup.$id} 
-                meetup={meetup} 
+              <MeetupCard
+                key={meetup.$id}
+                meetup={meetup}
                 user={user!}
                 userLocation={location}
               />
@@ -222,12 +224,16 @@ export default function Home() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className={cn(
-          "sm:max-w-[525px]",
-          theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white'
-        )}>
+        <DialogContent
+          className={cn(
+            "sm:max-w-[525px]",
+            theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
+          )}
+        >
           <DialogHeader>
-            <DialogTitle className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
+            <DialogTitle
+              className={theme === "dark" ? "text-white" : "text-gray-900"}
+            >
               Create a Meetup
             </DialogTitle>
           </DialogHeader>
@@ -237,13 +243,15 @@ export default function Home() {
               <Input
                 type="text"
                 value={newMeetup.title}
-                onChange={(e) => setNewMeetup({ ...newMeetup, title: e.target.value })}
+                onChange={(e) =>
+                  setNewMeetup({ ...newMeetup, title: e.target.value })
+                }
                 placeholder="Meetup Title"
                 required
                 className={cn(
-                  theme === 'dark' ? 
-                    'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
-                    'bg-white text-gray-900 placeholder-gray-500'
+                  theme === "dark"
+                    ? "bg-gray-700 text-white placeholder-gray-400 border-gray-600"
+                    : "bg-white text-gray-900 placeholder-gray-500"
                 )}
               />
             </div>
@@ -252,13 +260,15 @@ export default function Home() {
               <Label>Description</Label>
               <Textarea
                 value={newMeetup.description}
-                onChange={(e) => setNewMeetup({ ...newMeetup, description: e.target.value })}
+                onChange={(e) =>
+                  setNewMeetup({ ...newMeetup, description: e.target.value })
+                }
                 placeholder="Describe your meetup..."
                 required
                 className={cn(
-                  theme === 'dark' ? 
-                    'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
-                    'bg-white text-gray-900 placeholder-gray-500'
+                  theme === "dark"
+                    ? "bg-gray-700 text-white placeholder-gray-400 border-gray-600"
+                    : "bg-white text-gray-900 placeholder-gray-500"
                 )}
               />
             </div>
@@ -272,9 +282,9 @@ export default function Home() {
                   setSelectedLocation(location);
                 }}
                 className={cn(
-                  theme === 'dark' ? 
-                    'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
-                    'bg-white text-gray-900 placeholder-gray-500'
+                  theme === "dark"
+                    ? "bg-gray-700 text-white placeholder-gray-400 border-gray-600"
+                    : "bg-white text-gray-900 placeholder-gray-500"
                 )}
               />
             </div>
@@ -284,12 +294,14 @@ export default function Home() {
               <Input
                 type="datetime-local"
                 value={newMeetup.time}
-                onChange={(e) => setNewMeetup({ ...newMeetup, time: e.target.value })}
+                onChange={(e) =>
+                  setNewMeetup({ ...newMeetup, time: e.target.value })
+                }
                 required
                 className={cn(
-                  theme === 'dark' ? 
-                    'bg-gray-700 text-white border-gray-600' : 
-                    'bg-white text-gray-900'
+                  theme === "dark"
+                    ? "bg-gray-700 text-white border-gray-600"
+                    : "bg-white text-gray-900"
                 )}
               />
             </div>
@@ -297,13 +309,19 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select 
+                <Select
                   value={newMeetup.category}
-                  onValueChange={(value) => setNewMeetup({ ...newMeetup, category: value })}
+                  onValueChange={(value) =>
+                    setNewMeetup({ ...newMeetup, category: value })
+                  }
                 >
-                  <SelectTrigger className={cn(
-                    theme === 'dark' ? 'bg-gray-700 text-white border-gray-600' : 'bg-white'
-                  )}>
+                  <SelectTrigger
+                    className={cn(
+                      theme === "dark"
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-white"
+                    )}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -321,13 +339,18 @@ export default function Home() {
                 <Input
                   type="number"
                   value={newMeetup.maxParticipants}
-                  onChange={(e) => setNewMeetup({ ...newMeetup, maxParticipants: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setNewMeetup({
+                      ...newMeetup,
+                      maxParticipants: parseInt(e.target.value),
+                    })
+                  }
                   min="1"
                   required
                   className={cn(
-                    theme === 'dark' ? 
-                      'bg-gray-700 text-white border-gray-600' : 
-                      'bg-white text-gray-900'
+                    theme === "dark"
+                      ? "bg-gray-700 text-white border-gray-600"
+                      : "bg-white text-gray-900"
                   )}
                 />
               </div>
@@ -337,23 +360,25 @@ export default function Home() {
               <Label>Requirements</Label>
               <Textarea
                 value={newMeetup.requirements}
-                onChange={(e) => setNewMeetup({ ...newMeetup, requirements: e.target.value })}
+                onChange={(e) =>
+                  setNewMeetup({ ...newMeetup, requirements: e.target.value })
+                }
                 placeholder="Any specific requirements for participants..."
                 className={cn(
-                  theme === 'dark' ? 
-                    'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
-                    'bg-white text-gray-900 placeholder-gray-500'
+                  theme === "dark"
+                    ? "bg-gray-700 text-white placeholder-gray-400 border-gray-600"
+                    : "bg-white text-gray-900 placeholder-gray-500"
                 )}
               />
             </div>
 
-            <Button 
+            <Button
               type="submit"
               className={cn(
                 "w-full",
-                theme === 'dark' ? 
-                  'bg-blue-600 hover:bg-blue-500' : 
-                  'bg-blue-500 hover:bg-blue-600'
+                theme === "dark"
+                  ? "bg-blue-600 hover:bg-blue-500"
+                  : "bg-blue-500 hover:bg-blue-600"
               )}
             >
               Create
@@ -362,7 +387,7 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      <AuthModal 
+      <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         defaultView="login"

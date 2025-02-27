@@ -32,7 +32,7 @@ export default function Header({ user, onLogout }: HeaderProps) {
       >
         <motion.h1 
           whileHover={{ scale: 1.05 }}
-          className="text-2xl font-bold"
+          className="text-lg sm:text-2xl font-bold"
         >
           Remote Meetup
         </motion.h1>
