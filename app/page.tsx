@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import AuthModal from "../components/AuthModal";
 import { toast } from "sonner";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -164,7 +165,7 @@ export default function Home() {
       theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
     )}>
       <Header user={user} onLogout={handleLogout} />
-      <div className="container mx-auto p-4 pt-20">
+      <div className="container mx-auto p-4 pt-28">
         <div className="flex justify-between items-center mb-6">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }}
@@ -263,19 +264,20 @@ export default function Home() {
             </div>
 
             <div className="space-y-2">
-                <Label>Location</Label>
-                <Input
-                  type="text"
-                  value={newMeetup.location}
-                  onChange={(e) => setNewMeetup({ ...newMeetup, location: e.target.value })}
-                  placeholder="Location"
-                  className={cn(
-                    theme === 'dark' ? 
-                      'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
-                      'bg-white text-gray-900 placeholder-gray-500'
-                  )}
-                />
-              </div>
+              <Label>Location</Label>
+              <LocationAutocomplete
+                value={newMeetup.location}
+                onChange={(location) => {
+                  setNewMeetup({ ...newMeetup, location: location.address });
+                  setSelectedLocation(location);
+                }}
+                className={cn(
+                  theme === 'dark' ? 
+                    'bg-gray-700 text-white placeholder-gray-400 border-gray-600' : 
+                    'bg-white text-gray-900 placeholder-gray-500'
+                )}
+              />
+            </div>
 
             <div className="space-y-2">
               <Label>Date & Time</Label>
