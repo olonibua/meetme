@@ -50,7 +50,7 @@ export default function Home() {
         try {
           const userData = await account.get();
           setUser(userData);
-        } catch (error) {
+        } catch{
           // User not logged in, continue without user data
           console.log("No user logged in");
         }
